@@ -14,8 +14,8 @@ from pyspark.sql.functions import row_number
 config = configparser.ConfigParser()
 config.read('dl.cfg')
 
-os.environ['AWS_ACCESS_KEY_ID']=config['AWS_ACCESS_KEY_ID']
-os.environ['AWS_SECRET_ACCESS_KEY']=config['AWS_SECRET_ACCESS_KEY']
+os.environ['AWS_ACCESS_KEY_ID']=config['AWS']['AWS_ACCESS_KEY_ID']
+os.environ['AWS_SECRET_ACCESS_KEY']=config['AWS']['AWS_SECRET_ACCESS_KEY']
 
 
 def create_spark_session():
@@ -137,7 +137,6 @@ def main():
     spark = create_spark_session()
     input_data = "s3a://udacity-dend/"
     try:
-        print("------- Received: ",sys.argv[1])
         output_data = sys.argv[1]
     except IndexError:
         print "Please provide the direction of the S3 output bucket e.g.: S3://myoutputbucket/'"
