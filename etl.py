@@ -1,4 +1,4 @@
-# import configparser
+import configparser
 from datetime import datetime
 import os
 import sys
@@ -11,11 +11,11 @@ from pyspark.sql.functions import row_number
 
 # Dont forget to execute insude EMR cluster.
 
-# config = configparser.ConfigParser()
-# config.read('dl.cfg')
+config = configparser.ConfigParser()
+config.read('dl.cfg')
 
-# os.environ['AWS_ACCESS_KEY_ID']=config['AWS_ACCESS_KEY_ID']
-# os.environ['AWS_SECRET_ACCESS_KEY']=config['AWS_SECRET_ACCESS_KEY']
+os.environ['AWS_ACCESS_KEY_ID']=config['AWS_ACCESS_KEY_ID']
+os.environ['AWS_SECRET_ACCESS_KEY']=config['AWS_SECRET_ACCESS_KEY']
 
 
 def create_spark_session():
