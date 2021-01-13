@@ -23,7 +23,7 @@ The log files in the dataset you'll be working with are partitioned by year and 
 ### Execution Instructions
 
 1. Fill **dl.cfg** with your AWS User 'Access key ID' and 'Secret access key'. This user must have read and write access to S3.
-2. Send **dl.cfg** and **etl.py** to the cluster
+2. Send **dl.cfg** and **etl.py** to the cluster. They should be in the same folder
 3. To execute you must do spark-summit on etl.py and pass the address of the output bucket as parameter. e.g: `spark-submit etl.py s3://output-bucket-name/`
 
 
