@@ -92,18 +92,18 @@ def process_log_data(spark, input_data, output_data):
         return datetime.fromtimestamp(ts/1000.0)
 
     get_timestamp = udf(lambda x: format_datetime(int(x)),TimestampType())
-    df = df.withColumn("timestamp", get_timestamp(df.ts))
+    df = df.withColumn("start_time", get_timestamp(df.ts))
 
     # create datetime column from original timestamp column
     get_datetime = udf(lambda x: format_datetime(int(x)),DateType())
     df = df.withColumn("datetime", get_timestamp(df.ts))
 
     # extract columns to create time table
-    time_table = df.select('ts','datetime','timestamp',
-                            hour(df.timestamp).alias('hour'),
-                            dayofmonth(df.timestamp).alias('day'),
-                            dayofweek(df.timestamp).alias('weekday'),
-                            weekofyear(df.timestamp).alias('week'),
+    time_table = df.select('ts','datetime','start_time',
+                            hour(df.start_time).alias('hour'),
+                            dayofmonth(df.start_time).alias('day'),
+                            dayofweek(df.start_time).alias('weekday'),
+                            weekofyear(df.start_time).alias('week'),
                             month(df.datetime).alias('month'),
                             year(df.datetime).alias('year')
                           ).dropDuplicates()
@@ -120,15 +120,16 @@ def process_log_data(spark, input_data, output_data):
     # extract columns from joined song and log datasets to create songplays table 
     cond = [df.artist == song_df.artist_name , df.song == song_df.title,  df.length == song_df.duration ]
     songplays_table = df.join(song_df,cond) \
-      .withColumn("timestamp",get_timestamp(df.ts)) \
-      .select("timestamp","userid","level","song_id","artist_id","sessionid", "location", "userAgent")
-
+      .withColumn("start_time",get_timestamp(df.ts)) \
+      .withColumn("year",year("start_time")) \
+      .withColumn("month",month("start_time")) \
+      .select("start_time","userid","level","song_id","artist_id","sessionid", "location", "userAgent", "year","month")
+      
 
     # write songplays table to parquet files partitioned by year and month
-    songplays_table
     songplays_table.write \
             .mode("overwrite") \
-            .partitionBy(year("timestamp"),month("timestamp")) \
+            .partitionBy("year","month") \
             .save(output_data +"parquet/songplays.parquet", format = 'parquet', header = True)
 
 
